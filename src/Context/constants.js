@@ -10,11 +10,13 @@ export const ChainId = {
 	GOERLI: 5,
 	POLYGON_MUMBAI: 80001,
 	POLYGON_MAINNET: 137,
+	SCROLL: 534353,
 };
 
-export let activeChainId = ChainId.POLYGON_MUMBAI;
+export let activeChainId = ChainId.SCROLL;
 export const supportedChains = [
 	ChainId.GOERLI,
 	ChainId.POLYGON_MAINNET,
 	ChainId.POLYGON_MUMBAI,
+	ChainId.SCROLL
 ];

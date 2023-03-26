@@ -78,35 +78,15 @@ export const SafeBuyProvider = ({ children }) => {
 		age
 	) => {
 		const contract = await connectingWithSmartContract();
-
-		const web3Modal = new Wenb3Model();
-		const connection = await web3Modal.connect();
-		const provider = new ethers.providers.Web3Provider(connection);
-		let smartAccount = new SmartAccount(provider, options);
-		smartAccount = await smartAccount.init();
-
-		console.log("--------------------------------------------------------");
-		console.log(smartAccount);
-		console.log("--------------------------------------------------------");
-
-		const data = contract.interface.encodeFunctionData("registerUser", [
-			userAdd,
-			name,
-			emailId,
-			mobileNo,
-			gender,
-			age,
-		]);
-
-		const tx1 = {
-			to: SafeBuyAddress,
-			data,
-		};
-
-		const txResponse = await smartAccount.sendGaslessTransaction({
-			transaction: tx1,
-		});
-		console.log(txResponse);
+		if (currentAccount) {
+			const data = await contract.registerUser(userAdd,
+				name,
+				emailId,
+				mobileNo,
+				gender,
+				age);
+			console.log(data);
+		}
 	};
 
 	const registerCompany = async (comAdd, name, cin) => {

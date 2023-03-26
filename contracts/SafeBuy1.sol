@@ -5,7 +5,7 @@ import "./CompanyNFT.sol";
 
 // import "hardhat/console.sol";
 
-contract SafeBuys {
+contract SmartBuys {
     address payable owner;
 
     struct User {

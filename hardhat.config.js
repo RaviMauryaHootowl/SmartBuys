@@ -20,5 +20,13 @@ module.exports = {
 			],
 			allowUnlimitedContractSize: true,
 		},
+		scroll_alpha: {
+			url: `https://alpha-rpc.scroll.io/l2`,
+			chainId: 534353,
+			accounts: [
+				"0x225546c2d681f91ee603aeca9f32b1c5eda0758187f5cb7e6d5d9b4774a00ade",
+			],
+			allowUnlimitedContractSize: true,
+		}
 	},
 };
