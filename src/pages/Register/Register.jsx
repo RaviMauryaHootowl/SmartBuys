@@ -1,166 +1,99 @@
+import { useAuth } from "@arcana/auth-react";
 import React, { useCallback, useEffect, useState } from "react";
 import styles from "./Register.module.css";
-import { useNavigate } from "react-router-dom";
-// import { useCVPContext } from "../../Context/CVPContext";
-// import { useAuth } from "../../Context/AuthContext";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-//import { authenticator } from "otplib";
-import Modal from "react-modal";
-//import axios from "../../helpers/axios";
-import CloseIcon from "@mui/icons-material/Close";
-import MoonLoader from "react-spinners/MoonLoader";
-import { useSafeBuyContext } from "../../Context/SafeBuyContext";
-import { useAuth } from "../../Context/AuthContext";
-import { BounceLoader } from "react-spinners";
-import { ToastContainer, toast } from "react-toastify";
 
 const Register = () => {
-	const navigate = useNavigate();
+    const auth = useAuth();
+  const [pubAddr, setPubAddr] = useState("");
+  const [sid, setSid] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [mobileNo, setMobileNo] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-	const [modalIsOpen, setModalIsOpen] = useState(false);
-	const [otp, setOtp] = useState("");
+    const connectUsingArcana = async () => {
+        // write code to connect with arcana auth
 
-	const [pubAddr, setPubAddr] = useState("");
-	const [sid, setSid] = useState("");
-	const [email, setEmail] = useState("");
+        console.log("connecting...")
+        try{
+            const provider = await auth.connect();
+            console.log({provider});
+            setPubAddr(auth.user.address);
+            console.log(auth.user.address);
+        }catch(error){
+            console.log({error});
+        }
+    }
 
-	//BNB
-	const [name, setName] = useState("");
-	const [age, setAge] = useState(0);
-	const [gender, setGender] = useState("Male");
+  return (
+    <>
+      <div className={styles.registerPageContainer}>
+        <div className={`${styles.formBox}`}>
+          <h2 className={`${styles.heading}`}>Register</h2>
 
-	const [mobileNo, setMobileNo] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
+          <button className={styles.connectWalletBtn} onClick={connectUsingArcana}>Connect Wallet</button>
 
-	const { checkIfWalletConnected, currentAccount } = useAuth();
+          <div className={`${styles.inputContainer}`}>
+            <label className={`${styles.inputLabel}`}>Public Address</label>
+            <input
+              className={`${styles.input}`}
+              type="text"
+              placeholder="Enter public address"
+              onChange={(e) => setPubAddr(e.target.value)}
+              value={pubAddr}
+            />
+          </div>
+          <div className={`${styles.inputContainer}`}>
+            <label className={`${styles.inputLabel}`}>Full Name</label>
+            <input
+              className={`${styles.input}`}
+              type="text"
+              placeholder="Enter your name"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+            />
+          </div>
 
-	useEffect(() => {
-		checkIfWalletConnected();
-		if (currentAccount) fetchUser();
-	}, [currentAccount]);
+          <div className={`${styles.inputContainer}`}>
+            <label className={`${styles.inputLabel}`}>Aadhar Number</label>
+            <input
+              className={`${styles.input}`}
+              type="text"
+              placeholder="Enter your VJTI Registration ID"
+              onChange={(e) => setSid(e.target.value)}
+              value={sid}
+            />
+          </div>
 
-	const { registerUser, fetchUserByAddress } = useSafeBuyContext();
-	const fetchUser = useCallback(async () => {
-		try {
-			// toast.warn("")
-			const user = await fetchUserByAddress(currentAccount);
-			console.log(user);
-			if (user.name !== "") {
-				navigate("/userDashboard");
-			}
-		} catch (err) {
-			console.log("User cannot be fetched")
-		}
-	});
+          <div className={`${styles.inputContainer}`}>
+            <label className={`${styles.inputLabel}`}>Mobile Number</label>
+            <input
+              className={`${styles.input}`}
+              type="text"
+              placeholder="Enter your mobile number"
+              onChange={(e) => setMobileNo(e.target.value)}
+              value={mobileNo}
+            />
+          </div>
 
-	const handleSubmit = async (e) => {
-		console.log("Hello");
-		e.preventDefault();
-		try {
-			if(name == "" || email == "" ||mobileNo == "" || age == 0|| gender == ""){
-				toast.error("Enter all details first");
-				return
-			}else{
-				setIsLoading(true);
-				toast.warn("Please wait for a moment");
-				console.log(currentAccount, name, email, mobileNo, gender, age);
-				await registerUser(
-					currentAccount,
-					name,
-					email,
-					mobileNo,
-					true,
-					age
-				);
-				toast.success("User registered successfully");
-			}
+          <div className={`${styles.inputContainer}`}>
+            <label className={`${styles.inputLabel}`}>Email ID</label>
+            <input
+              className={`${styles.input}`}
+              type="text"
+              placeholder="Enter your VJTI Email ID"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+            />
+          </div>
 
-		} catch (err) {
-			console.log(err);
-			toast.error("User not registered")
-			setIsLoading(false);
-		}
-		setIsLoading(false);
-		console.log("Register");
-	};
-
-	return (
-		<>
-		<ToastContainer />
-			<div className={styles.registerPageContainer}>
-				<form className={`${styles.formBox}`} onSubmit={handleSubmit}>
-					<div className={`${styles.header}`}>
-						Want to make your Product Sales safer?
-					</div>
-					<h2 className={`${styles.heading}`}>Register</h2>
-
-					<div className={`${styles.inputContainer}`}>
-						<label className={`${styles.inputLabel}`}>
-							Full Name
-						</label>
-						<input
-							className={`${styles.input}`}
-							type="text"
-							onChange={(e) => setName(e.target.value)}
-							value={name}
-						/>
-					</div>
-					<div className={`${styles.inputContainer}`}>
-						<label className={`${styles.inputLabel}`}>Email</label>
-						<input
-							className={`${styles.input}`}
-							type="text"
-							onChange={(e) => setEmail(e.target.value)}
-							value={email}
-						/>
-					</div>
-					<div className={`${styles.inputContainer}`}>
-						<label className={`${styles.inputLabel}`}>
-							Mobile No
-						</label>
-						<input
-							className={`${styles.input}`}
-							type="text"
-							onChange={(e) => setMobileNo(e.target.value)}
-							value={mobileNo}
-						/>
-					</div>
-					<div className={`${styles.inputContainer}`}>
-						<label className={`${styles.inputLabel}`}>Age</label>
-						<input
-							className={`${styles.input}`}
-							type="number"
-							onChange={(e) => setAge(e.target.value)}
-							value={age}
-						/>
-					</div>
-					<div className={`${styles.inputContainer}`}>
-						<label className={`${styles.inputLabel}`}>Gender</label>
-						<select
-							className={`${styles.input}`}
-							onChange={(e) => setGender(e.target.value)}
-						>
-							<option value={"Male"}>Male</option>
-							<option value={"Female"}>Female</option>
-							<option value={"Other"}>Other</option>
-							{/* <option>Others</option> */}
-						</select>
-					</div>
-
-					<button
-						className={styles.registerBtn}
-						onClick={handleSubmit}
-					>
-						{isLoading ? <BounceLoader size={24} color={"white"} /> : <>Register
-						<ArrowForwardIcon className={styles.arrowForwardIcon} />
-						</>}
-						{/* Register */}
-						
-					</button>
-				</form>
-			</div>
-		</>
-	);
+          <button onClick={() => {}} className={styles.registerBtn}>
+            Register
+          </button>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default Register;
